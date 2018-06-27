@@ -43,8 +43,7 @@ jobs:
       # Database setup
       - run:
           name: Set Up Database
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:schema:load
+          command: bundle exec rake db:create && bundle exec rake db:schema:load
 
       # run tests!
       - run:
