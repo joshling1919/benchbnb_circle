@@ -1,7 +1,7 @@
-require 'rails_helper'
+# require 'rails_helper'
 
-RSpec.describe Bench, type: :model do
-  describe 'associations' do
-    it { should have_many(:reviews) }
-  end
-end
+# RSpec.describe Bench, type: :model do
+#   describe 'associations' do
+#     it { should have_many(:reviews) }
+#   end
+# end
