@@ -12,9 +12,9 @@ jobs:
           PGHOST: 127.0.0.1 
           PGUSER: bench_bnb
           RAILS_ENV: test
-      # - image: circleci/postgres:9.5-alpine
-      #   environment:
-      #     POSTGRES_USER: bench_bnb
+      - image: circleci/postgres:9.5-alpine
+        environment:
+          POSTGRES_USER: bench_bnb
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -29,8 +29,6 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
 
       - run:
           name: install dependencies
@@ -42,14 +40,17 @@ jobs:
             - vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
         
-      # # Database setup
-      # - run: bundle exec rake db:create
-      # - run: bundle exec rake db:schema:load
+      # Database setup
+      - run:
+          name: Set Up Database
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:schema:load
 
       # run tests!
       - run:
           name: run tests
           command: bundle exec rspec
+
   deploy-staging:
     working_directory: ~/progress-tracker
     docker:
@@ -58,7 +59,10 @@ jobs:
       - checkout
       - run:
           name: Deploy Staging
-          command:  git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_STAGING_APP_NAME.git staging:master
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_STAGING_APP_NAME.git staging:master
+            heroku run rake db:migrate --app benchbnb-circle-staging
+
   deploy-production:
     working_directory: ~/progress-tracker
     docker:
@@ -67,7 +71,9 @@ jobs:
       - checkout
       - run:
           name: Deploy to Production
-          command:  git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+            heroku run rake db:migrate --app benchbnb-circle
 
 workflows:
   version: 2
