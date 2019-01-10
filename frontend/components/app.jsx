@@ -17,7 +17,7 @@ const App = () => (
     <header>
       <Link to="/" className="header-link">
         <h1>
-Bench BnB woohoo
+Bench BnB YAY!!!
         </h1>
       </Link>
       <GreetingContainer />
